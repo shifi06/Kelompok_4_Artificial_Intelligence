@@ -1,0 +1,422 @@
+[
+  {
+    "id": 1,
+    "nama": "iPhone 17 Pro Max 512GB",
+    "harga": 24500000,
+    "kategori": "Apple",
+    "stok": 1500,
+    "terjual": "400,5k",
+    "deskripsi": "Layar Super Retina XDR 6.9 inci dengan Titanium grade 5.",
+    "gambar": "iphone17.jpg"
+  },
+  {
+    "id": 2,
+    "nama": "iPhone 17 Pro 256GB",
+    "harga": 21000000,
+    "kategori": "Apple",
+    "stok": 20,
+    "terjual": "250,8k",
+    "deskripsi": "Performa pro dalam ukuran pas dengan kamera telefoto 5x.",
+    "gambar": "iphone17.jpg"
+  },
+  {
+    "id": 3,
+    "nama": "iPhone 17 Standard 128GB",
+    "harga": 15000000,
+    "kategori": "Apple",
+    "stok": 30,
+    "terjual": "500,2k",
+    "deskripsi": "Chip A19 bionik terbaru dengan desain aluminium ringan.",
+    "gambar": "iphone17.jpg"
+  },
+  {
+    "id": 4,
+    "nama": "iPhone SE 4th Gen",
+    "harga": 8500000,
+    "kategori": "Apple",
+    "stok": 40,
+    "terjual": "150,4k",
+    "deskripsi": "Desain klasik dengan layar OLED pertama untuk seri SE.",
+    "gambar": "iphone_se.jpg"
+  },
+  {
+    "id": 5,
+    "nama": "Samsung Galaxy S26 Ultra 1TB",
+    "harga": 26000000,
+    "kategori": "Samsung",
+    "stok": 10,
+    "terjual": "85,9k",
+    "deskripsi": "Flagship dengan sensor 200MP dan S-Pen terintegrasi.",
+    "gambar": "samsung_s26.jpg"
+  },
+  {
+    "id": 6,
+    "nama": "Samsung Galaxy S26 FE",
+    "harga": 10500000,
+    "kategori": "Samsung",
+    "stok": 22,
+    "terjual": "120,3k",
+    "deskripsi": "Fitur flagship yang dicintai dengan harga terjangkau.",
+    "gambar": "samsung_s.jpg"
+  },
+  {
+    "id": 7,
+    "nama": "Samsung Galaxy Z Fold 7",
+    "harga": 28000000,
+    "kategori": "Samsung",
+    "stok": 5,
+    "terjual": "15,7k",
+    "deskripsi": "Inovasi layar lipat tertipis untuk multitasking lanjut.",
+    "gambar": "samsung_fold.jpg"
+  },
+  {
+    "id": 8,
+    "nama": "Samsung Galaxy A57 5G",
+    "harga": 6200000,
+    "kategori": "Samsung",
+    "stok": 50,
+    "terjual": "320,1k",
+    "deskripsi": "Mid-range andalan dengan ketahanan air IP67.",
+    "gambar": "samsung_a.jpg"
+  },
+  {
+    "id": 9,
+    "nama": "Google Pixel 10 Pro XL",
+    "harga": 19000000,
+    "kategori": "Google",
+    "stok": 8,
+    "terjual": "45,6k",
+    "deskripsi": "Integrasi AI Google Tensor G5 dengan kamera terbaik.",
+    "gambar": "pixel.jpg"
+  },
+  {
+    "id": 10,
+    "nama": "Google Pixel 10a",
+    "harga": 8200000,
+    "kategori": "Google",
+    "stok": 25,
+    "terjual": "95,2k",
+    "deskripsi": "Pengalaman Android murni dengan update 7 tahun.",
+    "gambar": "pixel.jpg"
+  },
+  {
+    "id": 11,
+    "nama": "Xiaomi 16 Ultra Titanium",
+    "harga": 18500000,
+    "kategori": "Xiaomi",
+    "stok": 7,
+    "terjual": "28,4k",
+    "deskripsi": "Lensa Leica optik generasi terbaru bodi titanium.",
+    "gambar": "xiaomi.jpg"
+  },
+  {
+    "id": 12,
+    "nama": "Xiaomi 16 Pro 5G",
+    "harga": 14000000,
+    "kategori": "Xiaomi",
+    "stok": 15,
+    "terjual": "60,9k",
+    "deskripsi": "Performa monster Snapdragon Gen 5 charger 120W.",
+    "gambar": "xiaomi16.jpg"
+  },
+  {
+    "id": 13,
+    "nama": "Redmi Note 15 Pro+ 5G",
+    "harga": 6800000,
+    "kategori": "Xiaomi",
+    "stok": 40,
+    "terjual": "450,7k",
+    "deskripsi": "Kamera 200MP dengan layar kurva 1.5K.",
+    "gambar": "redmi.jpg"
+  },
+  {
+    "id": 14,
+    "nama": "POCO F8 Pro 5G",
+    "harga": 7200000,
+    "kategori": "Xiaomi",
+    "stok": 20,
+    "terjual": "180,1k",
+    "deskripsi": "Flagship killer sejati skor Antutu tertinggi.",
+    "gambar": "poco.jpg"
+  },
+  {
+    "id": 15,
+    "nama": "Oppo Find X9 Pro",
+    "harga": 17500000,
+    "kategori": "Oppo",
+    "stok": 10,
+    "terjual": "35,5k",
+    "deskripsi": "Desain futuristik dengan kamera periskop luar biasa.",
+    "gambar": "oppo.jpg"
+  },
+  {
+    "id": 16,
+    "nama": "Vivo X200 Pro Zeiss",
+    "harga": 16800000,
+    "kategori": "Vivo",
+    "stok": 11,
+    "terjual": "42,8k",
+    "deskripsi": "Kolaborasi Zeiss menghasilkan foto sangat natural.",
+    "gambar": "vivo.jpg"
+  },
+  {
+    "id": 17,
+    "nama": "ASUS ROG Phone 10 Ultimate",
+    "harga": 22000000,
+    "kategori": "Gaming",
+    "stok": 5,
+    "terjual": "12,3k",
+    "deskripsi": "Ponsel gaming nomor 1 dunia layar sekunder.",
+    "gambar": "gaming.jpg"
+  },
+  {
+    "id": 18,
+    "nama": "Nothing Phone (4)",
+    "harga": 9800000,
+    "kategori": "Nothing",
+    "stok": 12,
+    "terjual": "25,6k",
+    "deskripsi": "Antarmuka Glyph ikonik material ramah lingkungan.",
+    "gambar": "nothing.jpg"
+  },
+  {
+    "id": 19,
+    "nama": "Infinix Zero 50 Ultra",
+    "harga": 5800000,
+    "kategori": "Infinix",
+    "stok": 30,
+    "terjual": "110,9k",
+    "deskripsi": "Layar lengkung 144Hz charger kabel 180W.",
+    "gambar": "infinix.jpg"
+  },
+  {
+    "id": 20,
+    "nama": "Realme GT 6 Pro",
+    "harga": 10200000,
+    "kategori": "Realme",
+    "stok": 14,
+    "terjual": "55,2k",
+    "deskripsi": "Performa kencang desain terinspirasi mobil balap.",
+    "gambar": "realme.jpg"
+  },
+  {
+    "id": 21,
+    "nama": "Samsung Galaxy S26 Standard",
+    "harga": 14500000,
+    "kategori": "Samsung",
+    "stok": 25,
+    "terjual": "140,4k",
+    "deskripsi": "Flagship ringkas dengan layar Dynamic AMOLED 2X dan Galaxy AI terbaru.",
+    "gambar": "samsung_s.jpg"
+  },
+  {
+    "id": 22,
+    "nama": "Samsung Galaxy M57 5G",
+    "harga": 5200000,
+    "kategori": "Samsung",
+    "stok": 35,
+    "terjual": "210,7k",
+    "deskripsi": "Monster baterai 6000mAh dengan performa gaming kelas menengah yang stabil.",
+    "gambar": "samsung_m.jpg"
+  },
+  {
+    "id": 23,
+    "nama": "Samsung Galaxy A37 5G",
+    "harga": 4800000,
+    "kategori": "Samsung",
+    "stok": 45,
+    "terjual": "380,1k",
+    "deskripsi": "Baterai awet 2 hari dengan layar Super AMOLED 120Hz.",
+    "gambar": "samsung_a37.jpg"
+  },
+  {
+    "id": 24,
+    "nama": "Samsung Galaxy Tab S11 Ultra",
+    "harga": 18500000,
+    "kategori": "Samsung",
+    "stok": 8,
+    "terjual": "8,3k",
+    "deskripsi": "Tablet layar lebar 14.6 inci untuk produktivitas dan desain profesional.",
+    "gambar": "samsung_tab.jpg"
+  },
+  {
+    "id": 25,
+    "nama": "Samsung Galaxy XCover 7 Pro",
+    "harga": 9200000,
+    "kategori": "Samsung",
+    "stok": 10,
+    "terjual": "5,6k",
+    "deskripsi": "Ponsel tangguh standar militer untuk penggunaan di medan ekstrem.",
+    "gambar": "samsung_rugged.jpg"
+  },
+  {
+    "id": 26,
+    "nama": "Oppo Find X9 Ultra 1TB",
+    "harga": 22500000,
+    "kategori": "Oppo",
+    "stok": 5,
+    "terjual": "11,2k",
+    "deskripsi": "Flagship kasta tertinggi dengan sensor periskop ganda dan chipset Snapdragon Gen 5.",
+    "gambar": "oppo_find_ultra.jpg"
+  },
+  {
+    "id": 27,
+    "nama": "Oppo Find N6 Flip",
+    "harga": 15500000,
+    "kategori": "Oppo",
+    "stok": 10,
+    "terjual": "22,8k",
+    "deskripsi": "Ponsel lipat modis dengan layar cover fungsional dan engsel titanium.",
+    "gambar": "oppo_n6_flip.jpg"
+  },
+  {
+    "id": 28,
+    "nama": "Oppo Reno 15 Pro Max 5G",
+    "harga": 11800000,
+    "kategori": "Oppo",
+    "stok": 15,
+    "terjual": "85,4k",
+    "deskripsi": "Rajanya foto portrait dengan teknologi AI Telephoto dan desain tipis.",
+    "gambar": "oppo_reno15pm.jpg"
+  },
+  {
+    "id": 29,
+    "nama": "Oppo Reno 15 Standard",
+    "harga": 7900000,
+    "kategori": "Oppo",
+    "stok": 22,
+    "terjual": "130,1k",
+    "deskripsi": "Performa seimbang dengan pengisian daya 100W SUPERVOOC.",
+    "gambar": "oppo_reno15pm.jpg"
+  },
+  {
+    "id": 30,
+    "nama": "Oppo A98 5G (2026 Edition)",
+    "harga": 4800000,
+    "kategori": "Oppo",
+    "stok": 30,
+    "terjual": "240,9k",
+    "deskripsi": "Layar 120Hz yang mulus dengan speaker stereo ganda.",
+    "gambar": "oppo_a98.jpg"
+  },
+  {
+    "id": 31,
+    "nama": "Oppo A60",
+    "harga": 3900000,
+    "kategori": "Oppo",
+    "stok": 40,
+    "terjual": "410,5k",
+    "deskripsi": "Durabilitas tinggi dengan sertifikasi tahan jatuh dan baterai awet.",
+    "gambar": "oppo_a60.jpg"
+  },
+  {
+    "id": 32,
+    "nama": "Oppo Pad Air 3",
+    "harga": 4200000,
+    "kategori": "Oppo",
+    "stok": 12,
+    "terjual": "15,3k",
+    "deskripsi": "Tablet tipis dan ringan untuk hiburan keluarga dan kerja ringan.",
+    "gambar": "oppo_pad.jpg"
+  },
+  {
+    "id": 33,
+    "nama": "Apple Watch Series 11",
+    "harga": 8500000,
+    "kategori": "Apple",
+    "stok": 25,
+    "terjual": "75,7k",
+    "deskripsi": "Smartwatch inovatif dengan pemantauan gula darah non-invasif.",
+    "gambar": "apple_watch11.jpg"
+  },
+  {
+    "id": 34,
+    "nama": "Apple Watch Ultra 3",
+    "harga": 15500000,
+    "kategori": "Apple",
+    "stok": 10,
+    "terjual": "30,2k",
+    "deskripsi": "Jam tangan ekstrem sport berbahan titanium dengan daya tahan baterai berhari-hari.",
+    "gambar": "apple_watch_ultra.jpg"
+  },
+  {
+    "id": 35,
+    "nama": "Samsung Galaxy Watch 8 Pro",
+    "harga": 7800000,
+    "kategori": "Samsung",
+    "stok": 18,
+    "terjual": "50,8k",
+    "deskripsi": "Pelacak kebugaran tingkat lanjut dengan sensor BioActive generasi baru.",
+    "gambar": "samsung_watch8pro.jpg"
+  },
+  {
+    "id": 36,
+    "nama": "Samsung Galaxy Watch 8",
+    "harga": 4500000,
+    "kategori": "Samsung",
+    "stok": 30,
+    "terjual": "90,4k",
+    "deskripsi": "Desain stylish dan ramping dengan integrasi Galaxy AI cerdas.",
+    "gambar": "samsung_watch8.jpg"
+  },
+  {
+    "id": 37,
+    "nama": "Google Pixel Watch 4",
+    "harga": 6800000,
+    "kategori": "Google",
+    "stok": 12,
+    "terjual": "20,1k",
+    "deskripsi": "Pengalaman Wear OS paling murni dengan integrasi penuh Fitbit Premium.",
+    "gambar": "pixel_watch.jpg"
+  },
+  {
+    "id": 38,
+    "nama": "Xiaomi Watch S5 Pro",
+    "harga": 3500000,
+    "kategori": "Xiaomi",
+    "stok": 35,
+    "terjual": "125,6k",
+    "deskripsi": "Layar AMOLED cerah 1.5 inci dengan bezel stainless steel tahan karat.",
+    "gambar": "xiaomi_watch.jpg"
+  },
+  {
+    "id": 39,
+    "nama": "Oppo Watch 5 Pro",
+    "harga": 4200000,
+    "kategori": "Oppo",
+    "stok": 20,
+    "terjual": "40,3k",
+    "deskripsi": "Layar lengkung 3D menawan dengan dual-chipset untuk penghematan daya.",
+    "gambar": "oppo_watch.jpg"
+  },
+  {
+    "id": 40,
+    "nama": "Huawei Watch GT 6 Pro",
+    "harga": 5800000,
+    "kategori": "Huawei",
+    "stok": 15,
+    "terjual": "35,9k",
+    "deskripsi": "Bodi keramik nanokristalin mewah dengan fitur pelacakan golf profesional.",
+    "gambar": "huawei_watch.jpg"
+  },
+  {
+    "id": 41,
+    "nama": "Garmin Watch Fenix 9",
+    "harga": 16500000,
+    "kategori": "Garmin",
+    "stok": 5,
+    "terjual": "7,5k",
+    "deskripsi": "Ultimate multisport GPS watch dengan pengisian daya solar dan senter LED.",
+    "gambar": "garmin_fenix.jpg"
+  },
+  {
+    "id": 42,
+    "nama": "Amazfit Watch GTR 2",
+    "harga": 2800000,
+    "kategori": "Amazfit",
+    "stok": 40,
+    "terjual": "180,2k",
+    "deskripsi": "Desain klasik memukau dengan asisten AI Zepp dan baterai tahan 24 hari.",
+    "gambar": "amazfit_gtr.jpg"
+  }
+]
