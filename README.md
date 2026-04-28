@@ -111,10 +111,15 @@ Gunakan AI sebagai alat bantu, bukan sumber kebenaran absolut.
 
 ## Authors
 
-- Name: Abdullah Mubarok Maspeke
-  NIM: 241552010001
-- Shifi Amalia Zein 
-  NIM: 241552010013
+# Author
+
+## Anggota
+
+- **Abdullah Mubarok Maspeke**  
+  NIM: 241552010001  
+
+- **Shifi Amalia Zein**  
+  NIM: 241552010013  
 
 ---
 
