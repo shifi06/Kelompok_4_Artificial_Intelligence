@@ -115,7 +115,7 @@ Gunakan AI sebagai alat bantu, bukan sumber kebenaran absolut.
 
 ## Anggota
 
-- **Abdullah Mubarok Maspekee**  
+- **Abdullah Mubarok Maspeke**  
   NIM: 241552010001  
 
 - **Shifi Amalia Zein**  
