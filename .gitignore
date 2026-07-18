@@ -1,4 +1,5 @@
-﻿# Python cache
+﻿@"
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
@@ -18,3 +19,4 @@ vector.db
 
 # Logs
 *.log
+"@ | Out-File -FilePath .gitignore -Encoding utf8
