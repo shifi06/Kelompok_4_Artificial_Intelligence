@@ -1,94 +1,122 @@
 import tensorflow as tf
-import os
-import pathlib
 from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.keras.preprocessing import image_dataset_from_directory
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
-# ==========================================
-# 1. OTOMATIS DOWNLOAD DATASET BUNGA
-# ==========================================
-print("--- LANGKAH 1: Mendownload Dataset Bunga Otomatis ---")
-dataset_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz"
-data_dir = tf.keras.utils.get_file('flower_photos', origin=dataset_url, extract=True)
-data_dir = pathlib.Path(data_dir)
+# Mengarah ke folder hasil ekstrak Kaggle
+folder_dataset = 'flowers' 
 
-# ==========================================
-# 2. MEMBAGI DATASET (TRAIN & VALIDASI)
-# ==========================================
-print("\n--- LANGKAH 2: Membagi Dataset (80% Train, 20% Validasi) ---")
-BATCH_SIZE = 32
-IMG_SIZE = (224, 224)
-
-# Load data untuk Training (80%)
-train_dataset = image_dataset_from_directory(
-    data_dir,
-    validation_split=0.2,
-    subset="training",
-    seed=123,
-    image_size=IMG_SIZE,
-    batch_size=BATCH_SIZE
+# Augmentasi Gambar (Mengajari AI variasi sudut, posisi, dan zoom bunga)
+datagen = ImageDataGenerator(
+    preprocessing_function=tf.keras.applications.resnet50.preprocess_input,
+    rotation_range=30,      
+    width_shift_range=0.2,  
+    height_shift_range=0.2, 
+    zoom_range=0.2,         
+    horizontal_flip=True,   
+    validation_split=0.2    # 80% Training, 20% Validation
 )
 
-# Load data untuk Validasi (20%)
-validation_dataset = image_dataset_from_directory(
-    data_dir,
-    validation_split=0.2,
-    subset="validation",
-    seed=123,
-    image_size=IMG_SIZE,
-    batch_size=BATCH_SIZE
+print("=== LANGKAH 2: MEMUAT DATA GAMBAR ===")
+train_generator = datagen.flow_from_directory(
+    folder_dataset,
+    target_size=(224, 224),
+    batch_size=32,
+    class_mode='categorical',
+    subset='training'
 )
 
-class_names = train_dataset.class_names
-JUMLAH_KELAS = len(class_names)
-print(f"Ditemukan {JUMLAH_KELAS} kelas bunga: {class_names}")
+validation_generator = datagen.flow_from_directory(
+    folder_dataset,
+    target_size=(224, 224),
+    batch_size=32,
+    class_mode='categorical',
+    subset='validation'
+)
 
-# Preprocessing format gambar khusus ResNet50
-def preprocess(images, labels):
-    return tf.keras.applications.resnet50.preprocess_input(images), labels
 
-train_dataset = train_dataset.map(preprocess)
-validation_dataset = validation_dataset.map(preprocess)
-
-# ==========================================
-# 3. MEMBUAT MODEL RESNET50
-# ==========================================
-print("\n--- LANGKAH 3: Membuat Arsitektur ResNet50 ---")
+# =====================================================================
+# BAGIAN 3: MEMBANGUN ARSITEKTUR MODEL AI
+# =====================================================================
+# Memuat fondasi ResNet50 dengan bobot pretrained 'imagenet'
 base_model = ResNet50(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
-base_model.trainable = False  # Bekukan model dasar
 
+# Kunci seluruh lapisan dasar di awal (Tahap 1)
+for layer in base_model.layers:
+    layer.trainable = False
+
+# Membuat struktur lapisan baru ("Kepala Klasifikasi") khusus untuk 5 kelas bunga kita
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
-x = Dense(512, activation='relu')(x) # Layer tambahan
-predictions = Dense(JUMLAH_KELAS, activation='softmax')(x)
+x = Dense(256, activation='relu')(x) 
+x = Dropout(0.5)(x)                  # Lapisan pelindung agar AI tidak cuma menghafal foto
+prediksi_akhir = Dense(5, activation='softmax')(x) 
 
-model = Model(inputs=base_model.input, outputs=predictions)
+# Menggabungkan base_model dan kepala klasifikasi baru
+model = Model(inputs=base_model.input, outputs=prediksi_akhir)
 
-model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-    loss='sparse_categorical_crossentropy',
-    metrics=['accuracy']
+
+# =====================================================================
+# BAGIAN 4: SETTING FITUR KEAMANAN PELATIHAN (CALLBACKS)
+# =====================================================================
+# Berhenti otomatis jika akurasi ujian (val_accuracy) mandek dalam 4 putaran
+hentikan_otomatis = EarlyStopping(monitor='val_accuracy', patience=4, restore_best_weights=True)
+
+# Menurunkan kecepatan belajar jika AI mulai kebingungan di tengah jalan
+turunkan_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=2, min_lr=0.000001)
+
+
+# =====================================================================
+# BAGIAN 5: PROSES TRAINING TAHAP 1 (LATIHAN DASAR)
+# =====================================================================
+print("\n================ TAHAP 1: MULAI BELAJAR NYANTAI ================")
+# Kompilasi awal dengan Learning Rate standar (0.001)
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Latih kepala model baru selama 10 putaran awal
+model.fit(
+    train_generator,
+    validation_data=validation_generator,
+    epochs=10, 
+    callbacks=[hentikan_otomatis, turunkan_lr]
 )
 
-# ==========================================
-# 4. PROSES TRAINING (BELAJAR)
-# ==========================================
-print("\n--- LANGKAH 4: Memulai Proses Training ---")
-# Kita coba 5 epoch dulu untuk latihan agar tidak terlalu lama
-EPOCHS = 5 
 
-history = model.fit(
-    train_dataset,
-    validation_data=validation_dataset,
-    epochs=EPOCHS
+# =====================================================================
+# BAGIAN 6: PROSES TRAINING TAHAP 2 (FINE-TUNING KUNCI AKURASI 95%+)
+# =====================================================================
+print("\n================ TAHAP 2: FINE-TUNING (MEMBUKA OTAK RESNET) ================")
+
+# 1. Buka gembok 20 lapisan paling atas dari otak ResNet50 agar bisa menyesuaikan detail bunga
+for layer in base_model.layers[-20:]:
+    layer.trainable = True
+
+# 2. Kompilasi ulang, WAJIB menggunakan Learning Rate yang super kecil (0.00001) 
+# agar AI menyerap detail tipis tanpa merusak pengetahuan dasar ResNet50
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.00001),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# 3. Latih kembali selama maksimal 15 putaran untuk pemantapan tingkat tinggi
+sejarah_pelatihan_final = model.fit(
+    train_generator,
+    validation_data=validation_generator,
+    epochs=15, 
+    callbacks=[hentikan_otomatis, turunkan_lr]
 )
 
-# ==========================================
-# 5. MENYIMPAN HASIL MODEL
-# ==========================================
-print("\n--- LANGKAH 5: Menyimpan Model ---")
-nama_file = "model_klasifikasi_bunga.keras"
-model.save(nama_file)
-print(f"Selesai! Model AI Anda telah disimpan dengan nama '{nama_file}'")
+
+# =====================================================================
+# BAGIAN 7: MENYIMPAN MODEL AKHIR
+# =====================================================================
+nama_file_simpan = 'model_klasifikasi_bunga_kaggle.keras'
+model.save(nama_file_simpan)
+
+print("\n=====================================================================")
+print(f"PROSES SUKSES TOTAL! Model super akurat Anda disimpan sebagai: {nama_file_simpan}")
+print("Silakan klik kanan/titik tiga pada file tersebut di menu kiri untuk mendownloadnya.")
+print("=====================================================================")
