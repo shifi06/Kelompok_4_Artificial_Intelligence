@@ -7,6 +7,7 @@ class Config:
     OLLAMA_URL = 'http://10.100.21.22:11434'
     OLLAMA_MODEL = 'qwen3:8b'
     OLLAMA_EMBED_URL = 'http://10.100.21.22:11434/api/embed'
+    OLLAMA_EMBED_MODEL = 'qwen3:8b'  
 
     # Konfigurasi Vector DB (Chroma)
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
