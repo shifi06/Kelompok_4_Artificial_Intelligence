@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang AI - Library AI System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark-blue shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">Library AI System 🤖</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav fw-semibold">
+                    <li class="nav-item"><a class="nav-link text-white" href="/">Beranda</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="/koleksi">Koleksi</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="/tentang-ai">Tentang AI</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="/login">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Konten Tentang AI -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0 p-4">
+                    <h3 class="fw-bold mb-3">Bagaimana AI Perpustakaan Bekerja?</h3>
+                    <p class="text-muted text-justify">
+                        Sistem ini menggunakan teknologi <strong>RAG (Retrieval-Augmented Generation)</strong> dan <strong>Ollama</strong>. 
+                        Ketika Anda bertanya, sistem akan mengubah pertanyaan Anda menjadi vektor matematis (Embedding) dan mencari buku dengan makna paling relevan di dalam <em>Vector Database (ChromaDB)</em>.
+                    </p>
+                    <p class="text-muted text-justify">
+                        Setelah buku yang cocok ditemukan, datanya akan dikirimkan ke model AI lokal (seperti Llama 3 atau Mistral) untuk disusun menjadi kalimat jawaban yang ramah dan mudah dipahami.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
