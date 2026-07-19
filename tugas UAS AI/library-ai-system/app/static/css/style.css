@@ -1,21 +1,152 @@
+/* =========================================================
+   Tema: Modern Dark Mode - "Kecerahan Abadi"
+   ========================================================= */
+
+/* Latar Belakang Utama */
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #f4f4f4;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0b0f19 !important; /* Biru/Hitam sangat gelap */
+    color: #e2e8f0 !important; /* Putih keabu-abuan agar nyaman dibaca */
+    min-height: 100vh;
 }
 
-h1 {
-    color: #333;
+/* Navigasi - Efek Kaca (Glassmorphism) Gelap dengan Border Bercahaya */
+.bg-dark-blue {
+    background: rgba(15, 23, 42, 0.8) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 242, 254, 0.1) !important;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #0078d7;
-    color: white;
+.navbar-brand {
+    background: linear-gradient(90deg, #00f2fe, #4facfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0px 0px 20px rgba(0, 242, 254, 0.4);
+}
+
+.nav-link {
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #00f2fe !important;
+    text-shadow: 0px 0px 10px rgba(0, 242, 254, 0.6);
+}
+
+/* Override Kelas Teks Bootstrap (Karena bergeser ke Dark Mode) */
+.text-dark {
+    color: #f8fafc !important; /* Mengubah text-dark menjadi terang */
+}
+
+.text-muted {
+    color: #94a3b8 !important; /* Abu-abu terang */
+}
+
+/* Desain Kartu (Card) */
+.card {
+    background-color: #111827 !important; /* Latar kartu gelap */
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(56, 189, 248, 0.4) !important;
+    box-shadow: 0 10px 40px rgba(56, 189, 248, 0.15) !important;
+}
+
+/* Form Input & Kotak Pencarian */
+.form-control {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #f1f5f9 !important;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-control::placeholder {
+    color: #64748b !important;
+}
+
+.form-control:focus {
+    background-color: #0f172a !important;
+    border-color: #00f2fe !important;
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.4) !important;
+    color: #ffffff !important;
+    outline: none;
+}
+
+/* Tombol Utama (Tanya AI, Login) */
+.btn-primary {
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
     border: none;
-    cursor: pointer;
+    color: #0f172a; /* Teks gelap kontras dengan background terang */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+    transition: all 0.3s ease;
 }
 
-button:hover {
-    background-color: #005a9e;
+.btn-primary:hover {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    box-shadow: 0 6px 25px rgba(0, 242, 254, 0.6);
+    transform: translateY(-2px);
+    color: #0f172a;
+}
+
+/* Tombol Sukses (Pinjam Buku) */
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    border: none;
+    color: #042f2e;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    box-shadow: 0 6px 25px rgba(16, 185, 129, 0.5);
+    transform: translateY(-2px);
+    color: #042f2e;
+}
+
+/* Tombol Outline (Detail Buku pada Koleksi) */
+.btn-outline-primary {
+    border: 2px solid #00f2fe;
+    color: #00f2fe;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: rgba(0, 242, 254, 0.1);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+    border-color: #00f2fe;
+}
+
+/* Area Respon AI */
+#ai-response {
+    background-color: #1e293b !important; /* Menimpa bg-light bawaan Bootstrap */
+    border: 1px solid rgba(196, 113, 237, 0.3) !important;
+    border-radius: 12px;
+    box-shadow: inset 0 0 20px rgba(196, 113, 237, 0.05);
+}
+
+#ai-text {
+    color: #e2e8f0 !important; /* Memastikan teks balasan AI terlihat */
+    line-height: 1.6;
+}
+
+/* Lencana Kategori (Badge) */
+.badge.bg-secondary {
+    background: rgba(196, 113, 237, 0.2) !important;
+    color: #c471ed !important;
+    border: 1px solid rgba(196, 113, 237, 0.4);
+    font-weight: normal;
+    letter-spacing: 0.5px;
 }
