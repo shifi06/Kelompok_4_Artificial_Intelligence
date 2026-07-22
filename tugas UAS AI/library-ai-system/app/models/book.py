@@ -1,6 +1,6 @@
 import chromadb
 import requests
-from config import Config
+from ..config import Config
 
 # Inisialisasi ChromaDB client lokal
 # ⚠️ PENTING: Pastikan Config.CHROMA_DB_DIR di file config.py menggunakan ABSOLUTE PATH.
@@ -15,10 +15,17 @@ class BookVectorDB:
         try:
             response = requests.post(Config.OLLAMA_EMBED_URL, json={
                 "model": Config.OLLAMA_EMBED_MODEL,
-                "prompt": text
+                "input": text
             })
             response.raise_for_status()
-            return response.json().get('embedding', [])
+            data = response.json()
+            # Ollama API balikin 'embeddings' (list of lists)
+            embeddings = data.get('embeddings', [])
+            if embeddings and isinstance(embeddings, list):
+                return embeddings[0]  # ambil embedding pertama
+            else:
+                print("Embedding kosong dari Ollama:", data)
+                return []
         except Exception as e:
             print(f"Gagal mendapatkan embedding: {e}")
             return []
@@ -75,7 +82,6 @@ class BookVectorDB:
     def get_all_books():
         """Mengambil semua buku dari Vector Database untuk ditampilkan di halaman koleksi"""
         try:
-            # Mengambil metadata dan dokumen dari koleksi
             results = collection.get(include=["metadatas", "documents"])
             books = []
             
