@@ -3,6 +3,8 @@ import requests
 from config import Config
 
 # Inisialisasi ChromaDB client lokal
+# ⚠️ PENTING: Pastikan Config.CHROMA_DB_DIR di file config.py menggunakan ABSOLUTE PATH.
+# Contoh di config.py: CHROMA_DB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'chroma_data')
 chroma_client = chromadb.PersistentClient(path=Config.CHROMA_DB_DIR)
 collection = chroma_client.get_or_create_collection(name=Config.COLLECTION_NAME)
 
@@ -23,12 +25,15 @@ class BookVectorDB:
 
     @staticmethod
     def add_book(book_id, title, category, description):
-        """Menambahkan buku ke Vector Database"""
-        text_to_embed = f"Judul: {title}. Kategori: {category}. Deskripsi: {description}"
+        """Menambahkan atau memperbarui buku di Vector Database"""
+        # PERBAIKAN 1: Hapus redudansi teks.
+        # Karena di bulk.py description sudah berisi teks lengkap, kita langsung gunakan.
+        text_to_embed = description 
         embedding = BookVectorDB.get_embedding(text_to_embed)
         
         if embedding:
-            collection.add(
+            # PERBAIKAN 2: Gunakan upsert(), bukan add()
+            collection.upsert(
                 ids=[str(book_id)],
                 embeddings=[embedding],
                 documents=[description],
@@ -61,7 +66,9 @@ class BookVectorDB:
                 (4, "Pengantar Astronomi", "Sains / Luar Angkasa", "Buku yang membahas bintang, planet, tata surya, dan fenomena alam semesta lainnya.")
             ]
             for b in books:
-                BookVectorDB.add_book(b[0], b[1], b[2], b[3])
+                # Sesuaikan format karena sekarang add_book tidak menambahkan teks otomatis
+                teks_lengkap = f"Judul: '{b[1]}'. Kategori: {b[2]}. Deskripsi: {b[3]}"
+                BookVectorDB.add_book(b[0], b[1], b[2], teks_lengkap)
             print("Selesai mengisi data Vector DB!")
 
     @staticmethod
