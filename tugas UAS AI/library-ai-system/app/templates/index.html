@@ -4,108 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library AI System</title>
-    <!-- Bootstrap CSS dari CDN -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS (Pastikan path ini sesuai dengan struktur folder) -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="../static/css/style.css">
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark-blue shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/">Library AI System 🤖</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav fw-semibold">
-                    <li class="nav-item"><a class="nav-link text-white" href="/">Beranda</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/koleksi">Koleksi</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/tentang_ai">Tentang AI</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/login">Login</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body class="d-flex flex-column min-vh-100">
 
-    <!-- Konten Utama -->
-    <div class="container mt-5">
-        
-        <!-- Bagian Tanya AI -->
-        <div class="row justify-content-center mb-5">
-            <div class="col-md-9">
-                <div class="card shadow-sm border-0 py-4 px-3 text-center">
-                    <div class="card-body">
-                        <h3 class="fw-bold text-dark mb-2">Tanya Asisten AI Perpustakaan</h3>
-                        <p class="text-muted mb-4">Beri tahu AI apa yang ingin Anda pelajari, dan kami akan mencarikan buku yang tepat!</p>
-                        
-                        <form id="ai-form" class="d-flex justify-content-center">
-                            <input type="text" id="ai-query" class="form-control me-2 py-2 w-75" placeholder="carikan saya buku tentang astronomi..." required>
-                            <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">Tanya AI</button>
-                        </form>
-
-                        <!-- Box untuk menampilkan jawaban dari Ollama -->
-                        <div id="ai-response" class="mt-4 text-start bg-light p-4 rounded border d-none">
-                            <div class="d-flex align-items-center mb-2" id="ai-loading">
-                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                                <span class="text-muted small">AI sedang berpikir...</span>
-                            </div>
-                            <div id="ai-text" class="text-dark"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bagian Rekomendasi Buku -->
-        <h4 class="fw-bold mb-4 text-dark px-2">Rekomendasi Populer</h4>
-        <div class="row px-2">
+    <!-- Area Konten Utama (Tengah) -->
+    <main class="flex-grow-1 d-flex flex-column justify-content-center p-3 mt-5">
+        <div class="chat-container">
             
-            <!-- Buku 1 -->
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm border-0 text-center h-100 py-3">
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <div>
-                            <h5 class="card-title fw-bold text-dark mb-1">Pemrograman Web Modern</h5>
-                            <p class="card-text text-muted small">Kategori: Teknologi / IT</p>
+            <!-- State Awal: Sambutan & Rekomendasi -->
+            <div id="welcome-state" class="mb-5">
+                <h1 class="fw-bold mb-2 gemini-gradient-text display-5">Halo, Pustakawan</h1>
+                <h3 class="text-muted fw-normal mb-5">Buku apa yang ingin Anda cari hari ini?</h3>
+                
+                <!-- Rekomendasi Populer -->
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="suggestion-card h-100 shadow-sm">
+                            <span class="d-block fw-semibold mb-1 text-dark">Pemrograman Web</span>
+                            <small class="text-muted">Kategori: Teknologi / IT</small>
                         </div>
-                        <button class="btn btn-success mt-3 w-75 mx-auto fw-semibold">Pinjam Buku</button>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="suggestion-card h-100 shadow-sm">
+                            <span class="d-block fw-semibold mb-1 text-dark">Sejarah AI</span>
+                            <small class="text-muted">Kategori: Sains / Komputer</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="suggestion-card h-100 shadow-sm">
+                            <span class="d-block fw-semibold mb-1 text-dark">Psikologi Manusia & AI</span>
+                            <small class="text-muted">Kategori: Psikologi</small>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Buku 2 -->
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm border-0 text-center h-100 py-3">
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <div>
-                            <h5 class="card-title fw-bold text-dark mb-1">Sejarah Kecerdasan Buatan</h5>
-                            <p class="card-text text-muted small">Kategori: Sains / Komputer</p>
-                        </div>
-                        <button class="btn btn-success mt-3 w-75 mx-auto fw-semibold">Pinjam Buku</button>
+            <!-- Box Hasil Jawaban AI (Awalnya Disembunyikan) -->
+            <div id="ai-response" class="mb-5 d-none">
+                <div class="d-flex mb-4">
+                    <div class="me-3">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fs-5 shadow-sm" style="width: 45px; height: 45px;">🤖</div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Buku 3 -->
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm border-0 text-center h-100 py-3">
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <div>
-                            <h5 class="card-title fw-bold text-dark mb-1">Psikologi Manusia & AI</h5>
-                            <p class="card-text text-muted small">Kategori: Psikologi / Filsafat</p>
+                    <div class="bg-white p-4 rounded-4 shadow-sm w-100 border">
+                        <div class="d-flex align-items-center mb-3" id="ai-loading">
+                            <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                            <span class="text-muted">AI sedang berpikir...</span>
                         </div>
-                        <button class="btn btn-success mt-3 w-75 mx-auto fw-semibold">Pinjam Buku</button>
+                        <div id="ai-text" class="text-dark lh-lg" style="font-size: 1.05rem;"></div>
                     </div>
                 </div>
             </div>
 
         </div>
-    </div>
+    </main>
 
-    <!-- Bootstrap Bundle JS -->
+    <!-- Area Input Form (Melayang di Bawah) -->
+    <footer class="mt-auto py-4 bg-transparent sticky-bottom">
+        <div class="chat-container px-3">
+            <!-- Form Tanya AI -->
+            <form id="ai-form" class="search-box d-flex align-items-center">
+                <input type="text" id="ai-query" class="form-control" placeholder="Tanya tentang buku, astronomi, atau penulis..." required>
+                <button type="submit" class="search-btn ms-2 shadow-sm" title="Kirim">
+                    ➤
+                </button>
+            </form>
+            <p class="text-center text-muted mt-3" style="font-size: 0.75rem;">AI dapat memberikan rekomendasi yang tidak akurat. Pastikan untuk mengecek silang dengan katalog asli perpustakaan.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap & Custom Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom Script -->
     <script src="/static/js/script.js"></script>
+    
+    <!-- Script tambahan opsional untuk menghilangkan sapaan saat chat dimulai -->
+    <script>
+        document.getElementById('ai-form').addEventListener('submit', function() {
+            // Sembunyikan tulisan sapaan dan kartu rekomendasi saat user nanya ke AI
+            const welcomeState = document.getElementById('welcome-state');
+            if (welcomeState) {
+                welcomeState.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

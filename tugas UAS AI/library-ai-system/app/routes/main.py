@@ -20,50 +20,46 @@ def index():
 
 # --- TAMBAHAN RUTE BARU TANPA MENGHAPUS KODE LAMA ---
 
-@main_bp.route('/koleksi')
-def koleksi():
-    # Ambil semua buku langsung dari ChromaDB
-    koleksi_buku = BookVectorDB.get_all_books()
-    # Kirim data buku ke file HTML
-    return render_template('koleksi.html', books=koleksi_buku)
-
-@main_bp.route('/tentang-ai')
-def tentang_ai():
-    return render_template('tentang_ai.html')
-
-@main_bp.route('/login')
-def login():
-    return render_template('login.html')
-
-# ----------------------------------------------------
-
 @main_bp.route('/ask-ai', methods=['POST'])
 def ask_ai():
     data = request.get_json()
+    # Query murni dari user, jadi Vector DB nggak bakal bingung
     query = data.get('query', '')
 
     try:
         # 1. Cari buku relevan di Vector DB (Semantic Search)
-        search_results = BookVectorDB.search_books(query, n_results=2)
+        search_results = BookVectorDB.search_books(query, n_results=3)
         
         # 2. Susun konteks dari hasil pencarian (Konteks RAG)
         context = ""
-        if search_results and search_results['metadatas'] and len(search_results['metadatas'][0]) > 0:
-            context = "Berikut adalah buku yang tersedia di perpustakaan kami yang relevan dengan pertanyaan:\n"
+        # Ambil secara aman pakai .get() supaya tidak error jika datanya kosong
+        if search_results and search_results.get('metadatas') and len(search_results['metadatas'][0]) > 0:
+            context = "[DATA BUKU DARI DATABASE PERPUSTAKAAN]:\n"
             for i, meta in enumerate(search_results['metadatas'][0]):
                 desc = search_results['documents'][0][i]
-                context += f"- Judul: {meta['title']} (Kategori: {meta['category']}). Deskripsi: {desc}\n"
+                judul = meta.get('title', 'Tidak diketahui')
+                penulis = meta.get('author', 'Tidak diketahui')
+                kategori = meta.get('category', 'Tidak diketahui')
+                halaman = meta.get('pages', 'Tidak diketahui')
+                
+                context += f"- Judul: {judul}\n  Penulis: {penulis}\n  Kategori: {kategori}\n  Halaman: {halaman}\n  Deskripsi: {desc}\n\n"
         else:
-            context = "Saat ini tidak ada buku yang sangat spesifik tentang itu di database, berikan saran umum saja."
+            context = "Saat ini tidak ada buku yang relevan di database untuk pertanyaan tersebut."
 
-        # 3. Kirim Prompt ke Ollama beserta Konteksnya
+        # 3. Kirim Prompt ke Ollama (Instruksi digabung di sini secara tersembunyi)
         prompt = (
-            f"Anda adalah asisten AI di perpustakaan. Pengguna bertanya: '{query}'.\n\n"
-            f"Informasi Database Perpustakaan (Gunakan ini untuk menjawab jika relevan):\n{context}\n\n"
-            f"Jawablah dengan bahasa Indonesia yang ramah dan singkat. Jika buku ada di database, rekomendasikan buku tersebut."
+            f"Kamu adalah Asisten AI Perpustakaan yang ramah. Pengguna bertanya: '{query}'.\n\n"
+            f"{context}\n"
+            f"[INSTRUKSI PENTING UNTUK AI]:\n"
+            f"1. Jika kamu merekomendasikan buku dari [DATA BUKU DARI DATABASE PERPUSTAKAAN], kamu WAJIB menuliskannya dalam format list rapi yang mencakup: Judul, Penulis, Kategori, Jumlah Halaman, dan Deskripsi singkat.\n"
+            f"2. Jangan pernah mengarang/halusinasi buku yang tidak ada di dalam data yang diberikan.\n"
+            f"3. Jawablah dengan bahasa Indonesia yang natural dan bersahabat."
         )
 
-        response = requests.post(Config.OLLAMA_URL, json={
+        # Diperbaiki: Menambahkan endpoint '/api/generate' agar tidak error 404
+        api_url = f"{Config.OLLAMA_URL}/api/generate"
+        
+        response = requests.post(api_url, json={
             "model": Config.OLLAMA_MODEL,
             "prompt": prompt,
             "stream": False
