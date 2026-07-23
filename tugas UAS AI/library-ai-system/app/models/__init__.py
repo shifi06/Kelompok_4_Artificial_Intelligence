@@ -1,2 +1,2 @@
 from .book import BookVectorDB
-from app.config import Config
+from app import Config
