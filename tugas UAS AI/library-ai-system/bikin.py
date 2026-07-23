@@ -1,41 +1,40 @@
 import csv
 import random
 
-# 1. Bahan Racikan Data Acak
-kata_depan = ["Reinkarnasi Menjadi", "Kisah Sang", "Bangkitnya", "Petualangan", "Legenda", "Solo", "Kehidupan Baru", "Dunia"]
-kata_tengah = ["Pahlawan", "Raja Iblis", "Ksatria Sihir", "Assassin", "Slime", "NPC", "Pemburu Naga", "Dewa"]
-kata_belakang = ["di Dunia Lain", "dengan Status Max", "Kembali ke Masa Lalu", "di Akademi Sihir", "Online", "Terkuat"]
-nama_penulis = ["Kawahara", "Oda", "Isayama", "Kishimoto", "Akutami", "Fujimoto", "Chugong", "Kubo", "Togashi"]
-kategori_list = [
-    "Isekai, Action, Fantasy", 
-    "Sci-Fi, Mecha, Drama", 
-    "School, Romance, Comedy", 
-    "Dark Fantasy, Thriller",
-    "Adventure, Magic, Shounen"
-]
-
-NAMA_FILE = 'dataset_anime_20000.csv'
-TOTAL_DATA = 20000
-
-print(f"⏳ Sedang membuat file {NAMA_FILE} berisi {TOTAL_DATA} baris...")
-
-# 2. Proses Pembuatan File CSV
-with open(NAMA_FILE, mode='w', newline='', encoding='utf-8') as file:
-    writer = csv.writer(file)
+def generate_dummy_dataset():
+    categories = ['AI', 'Cybersecurity', 'Programming', 'HTML', 'CSS', 'JavaScript', 'Python', 'Engineering', 'Data']
     
-    # Bikin Header (Baris paling atas di Excel)
-    writer.writerow(['Title', 'Author', 'Category', 'Pages', 'Synopsis'])
+    first_names = ['John', 'Jane', 'Alex', 'Sarah', 'Michael', 'Emily', 'David', 'Laura', 'Robert', 'Emma']
+    last_names = ['Smith', 'Doe', 'Johnson', 'Brown', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris']
     
-    # Looping 20.000 kali untuk bikin datanya
-    for i in range(TOTAL_DATA):
-        judul = f"{random.choice(kata_depan)} {random.choice(kata_tengah)} {random.choice(kata_belakang)} Vol. {random.randint(1, 50)}"
-        penulis = f"{random.choice(nama_penulis)} {random.choice(['T.', 'K.', 'R.', 'S.', 'Y.'])}"
-        kategori = random.choice(kategori_list)
-        halaman = f"{random.randint(150, 450)} Halaman"
+    prefixes = ['Mastering', 'The Art of', 'Introduction to', 'Advanced', 'Practical', 'Fundamentals of', 'Modern']
+    suffixes = ['for Beginners', 'in Practice', 'Handbook', 'Demystified', 'Step by Step', 'for Professionals']
+    
+    filename = 'dataset_tech_900.csv'
+    
+    with open(filename, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        # Sesuai header yang sudah dikenali oleh sistemmu
+        writer.writerow(['Title', 'Author', 'Category', 'Pages', 'Synopsis'])
         
-        deskripsi = f"Volume ini melanjutkan kisah luar biasa dari {judul}. Sang protagonis harus menghadapi ancaman baru di dunianya menggunakan kekuatan rahasia yang dimilikinya. Karya epik ini ditulis oleh {penulis}."
-        
-        # Tulis ke dalam file CSV
-        writer.writerow([judul, penulis, kategori, halaman, deskripsi])
+        for category in categories:
+            for i in range(1, 101):
+                # Generate Judul Acak
+                prefix = random.choice(prefixes)
+                suffix = random.choice(suffixes)
+                if random.random() > 0.5:
+                    title = f"{prefix} {category}"
+                else:
+                    title = f"{category} {suffix}"
+                
+                # Generate Penulis, Halaman, & Sinopsis Acak
+                author = f"{random.choice(first_names)} {random.choice(last_names)}"
+                pages = random.randint(150, 800)
+                synopsis = f"Buku panduan komprehensif ini membahas konsep-konsep penting tentang {category}. Cocok untuk pembaca yang ingin memperdalam wawasan mengenai {title}."
+                
+                writer.writerow([title, author, category, f"{pages} Halaman", synopsis])
+                
+    print(f"✅ Berhasil membuat file {filename} dengan total 900 buku!")
 
-print("✅ SUKSES! File CSV berhasil dibuat. Silakan cek folder kamu!")
+if __name__ == "__main__":
+    generate_dummy_dataset()
