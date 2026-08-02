@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}Koleksi Buku - Library AI System{% endblock %}
+
+{% block meta_description %}Jelajahi seluruh koleksi buku di Library AI System. Cari buku berdasarkan judul, penulis, atau kategori, dan saring berdasarkan huruf awal judul (A-Z). Lihat penulis, kategori, dan deskripsi setiap buku untuk menemukan bacaan yang tepat.{% endblock %}
+
+{% block og_title %}Koleksi Buku - Library AI System{% endblock %}
+
+{% block og_description %}Daftar lengkap koleksi buku perpustakaan beserta penulis, kategori, dan deskripsinya. Bisa dicari dan disaring per huruf.{% endblock %}
+
+{% block head_extra %}
+{% if books %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Koleksi Buku Library AI System",
+  "itemListElement": [
+    {% for b in books %}
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index }},
+      "item": {
+        "@type": "Book",
+        "name": {{ b.title | tojson }},
+        "author": { "@type": "Person", "name": {{ b.author | tojson }} },
+        "genre": {{ b.category | tojson }},
+        "description": {{ b.description | tojson }},
+        "url": "{{ request.url_root }}books/{{ b.id }}"
+      }
+    }{{ "," if not loop.last }}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h1 class="fw-bold gemini-gradient-text mb-0">Koleksi Buku</h1>
+        <a href="{{ url_for('main.new_book') }}" class="btn btn-primary">+ Tambah Buku</a>
+    </div>
+
+    <p class="text-muted mb-3" id="book-count">{{ books|length }} buku tersedia di perpustakaan.</p>
+
+    <!-- Toolbar: Pencarian -->
+    <div class="collection-toolbar mb-4">
+        <div class="collection-search d-flex align-items-center">
+            <label for="book-search" class="visually-hidden">Cari buku</label>
+            <input type="search" id="book-search" class="form-control" placeholder="Cari judul, penulis, atau kategori...">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+        </div>
+    </div>
+
+    {% if books %}
+    <div class="collection-layout d-flex flex-column flex-lg-row gap-4 align-items-start">
+        <div class="flex-grow-1 w-100 order-lg-1">
+            <div class="row g-4" id="book-grid">
+                {% for b in books %}
+                <div class="col-md-6 col-lg-4 book-col"
+                     data-title="{{ b.title | lower }}"
+                     data-author="{{ b.author | lower }}"
+                     data-category="{{ b.category | lower }}">
+                    <article class="book-card h-100 d-flex flex-column">
+                        <a class="book-cover" href="{{ url_for('main.book_detail', book_id=b.id) }}" aria-hidden="true" tabindex="-1">
+                            <span>{{ b.title[:1] | upper }}</span>
+                        </a>
+                        <div class="book-card-body d-flex flex-column flex-grow-1">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-secondary">{{ b.category }}</span>
+                                <span class="book-id">#{{ b.id }}</span>
+                            </div>
+                            <h2 class="book-title">
+                                <a href="{{ url_for('main.book_detail', book_id=b.id) }}">{{ b.title }}</a>
+                            </h2>
+                            <p class="book-author">
+                                <span class="author-avatar" aria-hidden="true">✍️</span>
+                                {{ b.author }}
+                            </p>
+                            <p class="book-desc flex-grow-1">{{ b.description }}</p>
+                            <div class="book-actions">
+                                <a class="btn btn-sm btn-outline-info" href="{{ url_for('main.book_detail', book_id=b.id) }}">Detail</a>
+                                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('main.edit_book', book_id=b.id) }}">Edit</a>
+                                <form action="{{ url_for('main.delete_book', book_id=b.id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus buku \'{{ b.title }}\'?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
+                                </form>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div id="no-results" class="text-center py-5 d-none">
+                <p class="text-muted">Tidak ada buku yang cocok dengan pencarianmu. Coba kata kunci lain ya. 🔍</p>
+            </div>
+        </div>
+
+        <!-- Sidebar filter huruf A-Z (memanjang ke bawah di sisi kanan) -->
+        <aside class="alphabet-sidebar order-lg-2" aria-label="Filter huruf awal judul buku">
+            <div class="alphabet-sidebar-title">Huruf Awal</div>
+            {% for letter in available_letters %}
+            <button type="button" class="letter-btn" data-letter="{{ letter }}">{{ letter }}</button>
+            {% endfor %}
+            {% if has_special %}
+            <button type="button" class="letter-btn" data-letter="#">#</button>
+            {% endif %}
+        </aside>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <p class="text-muted">Belum ada buku di koleksi. Tambahkan buku pertama Anda.</p>
+        <a href="{{ url_for('main.new_book') }}" class="btn btn-primary">+ Tambah Buku</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('book-search');
+    const countEl = document.getElementById('book-count');
+    const grid = document.getElementById('book-grid');
+    const noResults = document.getElementById('no-results');
+    const letterBtns = Array.from(document.querySelectorAll('.letter-btn'));
+    if (!grid) return;
+
+    const cards = Array.from(grid.querySelectorAll('.book-col'));
+    let currentLetter = 'ALL';
+    let query = '';
+
+    function firstCharLower(title) {
+        return (title.trim().charAt(0) || '').toLowerCase();
+    }
+
+    function applyFilters() {
+        const q = query.toLowerCase();
+        const visible = cards.filter(card => {
+            const t = card.dataset.title || '';
+            const a = card.dataset.author || '';
+            const c = card.dataset.category || '';
+            const matchesQuery = t.includes(q) || a.includes(q) || c.includes(q);
+
+            const f = firstCharLower(t);
+            let letterOk;
+            if (currentLetter === 'ALL') {
+                letterOk = true;
+            } else if (currentLetter === '#') {
+                letterOk = f !== '' && !/[a-z]/.test(f);
+            } else {
+                letterOk = f === currentLetter.toLowerCase();
+            }
+            return matchesQuery && letterOk;
+        });
+
+        cards.forEach(card => card.classList.toggle('d-none', !visible.includes(card)));
+
+        if (countEl) {
+            const filtered = visible.length;
+            countEl.textContent = currentLetter === 'ALL' && query === ''
+                ? `${cards.length} buku tersedia di perpustakaan.`
+                : `Menampilkan ${filtered} dari ${cards.length} buku.`;
+        }
+        if (noResults) noResults.classList.toggle('d-none', visible.length > 0);
+    }
+
+    function setLetter(letter) {
+        if (currentLetter === letter) {
+            currentLetter = 'ALL';
+        } else {
+            currentLetter = letter;
+        }
+        letterBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.letter === currentLetter));
+        applyFilters();
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            query = searchInput.value.trim();
+            applyFilters();
+        });
+    }
+
+    letterBtns.forEach(btn => {
+        btn.addEventListener('click', () => setLetter(btn.dataset.letter));
+    });
+});
+</script>
+{% endblock %}

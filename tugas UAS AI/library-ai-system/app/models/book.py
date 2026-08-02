@@ -31,21 +31,72 @@ class BookVectorDB:
             return []
 
     @staticmethod
-    def add_book(book_id, title, category, description):
-        """Menambahkan atau memperbarui buku di Vector Database"""
-        text_to_embed = description 
-        embedding = BookVectorDB.get_embedding(text_to_embed)
+    def _build_full_text(title, author, category, description):
+        """Menyusun teks lengkap yang disimpan di Vector DB (dipakai untuk embedding)"""
+        parts = [f"Judul: '{title}'"]
+        if author:
+            parts.append(f"Penulis: {author}")
+        parts.append(f"Kategori: {category}")
+        parts.append(f"Deskripsi: {description}")
+        return ". ".join(parts)
+
+    @staticmethod
+    def _clean_description(full_text):
+        """Mengambil kembali deskripsi asli dari teks lengkap yang tersimpan di Vector DB"""
+        if full_text and full_text.startswith("Judul:"):
+            parts = full_text.split("Deskripsi: ", 1)
+            return parts[1] if len(parts) > 1 else full_text
+        return full_text
+
+    @staticmethod
+    def add_book(book_id, title, author, category, description):
+        """Menambahkan buku baru di Vector Database"""
+        full_text = BookVectorDB._build_full_text(title, author, category, description)
+        embedding = BookVectorDB.get_embedding(full_text)
         
         if embedding:
-            collection.upsert(
+            collection.add(
                 ids=[str(book_id)],
                 embeddings=[embedding],
-                documents=[description],
-                metadatas=[{"title": title, "category": category}]
+                documents=[full_text],
+                metadatas=[{"title": title, "author": author, "category": category}]
             )
             return True
         else:
             print(f"⚠️ GAGAL SIMPAN [{title[:25]}...]: Embedding kosong/gagal dibuat.")
+            return False
+
+    @staticmethod
+    def update_book(book_id, title, author, category, description):
+        """Memperbarui data buku yang sudah ada di Vector Database"""
+        existing = BookVectorDB.get_book(str(book_id))
+        if existing is None:
+            print(f"⚠️ Buku dengan ID {book_id} tidak ditemukan, tidak bisa diperbarui.")
+            return False
+
+        full_text = BookVectorDB._build_full_text(title, author, category, description)
+        embedding = BookVectorDB.get_embedding(full_text)
+
+        if embedding:
+            collection.update(
+                ids=[str(book_id)],
+                embeddings=[embedding],
+                documents=[full_text],
+                metadatas=[{"title": title, "author": author, "category": category}]
+            )
+            return True
+        else:
+            print(f"⚠️ GAGAL PERBARUI [{title[:25]}...]: Embedding kosong/gagal dibuat.")
+            return False
+
+    @staticmethod
+    def delete_book(book_id):
+        """Menghapus buku dari Vector Database berdasarkan ID"""
+        try:
+            collection.delete(ids=[str(book_id)])
+            return True
+        except Exception as e:
+            print(f"❌ Error menghapus buku ID {book_id}: {e}")
             return False
 
     @staticmethod
@@ -84,14 +135,13 @@ class BookVectorDB:
         if collection.count() == 0:
             print("Mengisi data awal ke Vector DB...")
             books = [
-                (1, "Pemrograman Web Modern", "Teknologi / IT", "Buku panduan lengkap tentang HTML, CSS, JavaScript, dan framework web modern."),
-                (2, "Sejarah Kecerdasan Buatan", "Sains / Komputer", "Buku yang membahas awal mula AI dari mesin Turing hingga Deep Learning masa kini."),
-                (3, "Psikologi Manusia & AI", "Psikologi / Filsafat", "Membahas dampak interaksi manusia dengan asisten kecerdasan buatan dari sudut pandang psikologis."),
-                (4, "Pengantar Astronomi", "Sains / Luar Angkasa", "Buku yang membahas bintang, planet, tata surya, dan fenomena alam semesta lainnya.")
+                (1, "Pemrograman Web Modern", "Rudi Hartono", "Teknologi / IT", "Buku panduan lengkap tentang HTML, CSS, JavaScript, dan framework web modern."),
+                (2, "Sejarah Kecerdasan Buatan", "Budi Santoso", "Sains / Komputer", "Buku yang membahas awal mula AI dari mesin Turing hingga Deep Learning masa kini."),
+                (3, "Psikologi Manusia & AI", "Dewi Lestari", "Psikologi / Filsafat", "Membahas dampak interaksi manusia dengan asisten kecerdasan buatan dari sudut pandang psikologis."),
+                (4, "Pengantar Astronomi", "Andi Wijaya", "Sains / Luar Angkasa", "Buku yang membahas bintang, planet, tata surya, dan fenomena alam semesta lainnya.")
             ]
             for b in books:
-                teks_lengkap = f"Judul: '{b[1]}'. Kategori: {b[2]}. Deskripsi: {b[3]}"
-                BookVectorDB.add_book(b[0], b[1], b[2], teks_lengkap)
+                BookVectorDB.add_book(b[0], b[1], b[2], b[3], b[4])
             print("Selesai mengisi data Vector DB!")
 
     @staticmethod
@@ -106,10 +156,29 @@ class BookVectorDB:
                     books.append({
                         'id': results['ids'][i],
                         'title': results['metadatas'][i].get('title', 'Tanpa Judul'),
+                        'author': results['metadatas'][i].get('author', 'Tidak Diketahui'),
                         'category': results['metadatas'][i].get('category', 'Umum'),
-                        'description': results['documents'][i]
+                        'description': BookVectorDB._clean_description(results['documents'][i])
                     })
             return books
         except Exception as e:
             print(f"Error mengambil koleksi buku: {e}")
             return []
+
+    @staticmethod
+    def get_book(book_id):
+        """Mengambil satu buku dari Vector Database berdasarkan ID"""
+        try:
+            results = collection.get(ids=[str(book_id)], include=["metadatas", "documents"])
+            if results and results['ids']:
+                return {
+                    'id': results['ids'][0],
+                    'title': results['metadatas'][0].get('title', 'Tanpa Judul'),
+                    'author': results['metadatas'][0].get('author', 'Tidak Diketahui'),
+                    'category': results['metadatas'][0].get('category', 'Umum'),
+                    'description': BookVectorDB._clean_description(results['documents'][0])
+                }
+            return None
+        except Exception as e:
+            print(f"Error mengambil buku ID {book_id}: {e}")
+            return None
