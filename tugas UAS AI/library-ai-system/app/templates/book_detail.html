@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }} - Library AI System{% endblock %}
+
+{% block meta_description %}{{ book.description[:155] }}...{% endblock %}
+
+{% block og_title %}{{ book.title }} - Library AI System{% endblock %}
+
+{% block og_description %}{{ book.description[:155] }}...{% endblock %}
+
+{% block twitter_title %}{{ book.title }} - Library AI System{% endblock %}
+
+{% block twitter_description %}{{ book.description[:155] }}...{% endblock %}
+
+{% block head_extra %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Book",
+  "name": {{ book.title | tojson }},
+  "genre": {{ book.category | tojson }},
+  "description": {{ book.description | tojson }},
+  "url": "{{ request.url }}",
+  "inLanguage": "id",
+  "isAccessibleForFree": true,
+  "publisher": {
+    "@type": "Organization",
+    "name": "Library AI System"
+  }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Beranda</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('main.list_books') }}">Koleksi Buku</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ book.title }}</li>
+        </ol>
+    </nav>
+
+    <article class="card p-4">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            <div class="badge bg-secondary">{{ book.category }}</div>
+        </div>
+        <h1 class="fw-bold gemini-gradient-text mb-2">{{ book.title }}</h1>
+        <p class="text-muted mb-4" style="font-size: 1rem;">✍️ {{ book.author }}</p>
+        <p class="text-muted lh-lg" style="font-size: 1.05rem;">{{ book.description }}</p>
+
+        <div class="d-flex gap-2 mt-4 flex-wrap">
+            <a class="btn btn-primary" href="{{ url_for('main.index') }}">Tanya AI tentang buku ini</a>
+            <a class="btn btn-outline-info" href="{{ url_for('main.edit_book', book_id=book.id) }}">Edit</a>
+            <form action="{{ url_for('main.delete_book', book_id=book.id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus buku \'{{ book.title }}\'?');">
+                <button type="submit" class="btn btn-outline-danger">Hapus</button>
+            </form>
+        </div>
+    </article>
+</div>
+{% endblock %}

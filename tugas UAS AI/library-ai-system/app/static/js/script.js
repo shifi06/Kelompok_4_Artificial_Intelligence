@@ -4,14 +4,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // FITUR TANYA AI (Tampilan Chat Bubble Interaktif)
     // -----------------------------------------------------
     const aiForm = document.getElementById('ai-form');
+    const queryInput = document.getElementById('ai-query');
     let isFirstMessage = true; // Penanda untuk membersihkan isi dummy HTML awal
     
+    // Chip pertanyaan cepat (klik = langsung bertanya)
+    document.querySelectorAll('.quick-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            if (!aiForm || !queryInput) return;
+            queryInput.value = chip.dataset.query;
+            aiForm.dispatchEvent(new Event('submit', { cancelable: true }));
+        });
+    });
+
     if (aiForm) {
         aiForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Ambil input teks dari user
-            const queryInput = document.getElementById('ai-query');
             const userText = queryInput.value.trim();
             
             if (userText === "") return; // Jangan proses kalau input kosong
@@ -56,12 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 hapusElemen(loadingId);
                 
                 // 8. Bersihkan <think> & terjemahkan Markdown ke HTML
-                let cleanResponse = data.response.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+                let cleanResponse = (data.response || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
                 cleanResponse = cleanResponse.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
                 cleanResponse = cleanResponse.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+                cleanResponse = cleanResponse.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
                 cleanResponse = cleanResponse.replace(/\n/g, '<br>');
 
-                // 9. Tampilkan Bubble Chat AI (Kiri)
+                // 9. Tampilkan Bubble Chat AI dengan efek mengetik (lebih hidup)
                 tampilkanPesanAI(cleanResponse);
                 
             } catch (err) {
@@ -77,11 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function tampilkanPesanUser(teks) {
         const container = document.getElementById('ai-response');
-        // Bubble User (Warna Gradasi Cyan, Rata Kanan)
+        // Bubble User (Gradasi Kalem, Rata Kanan)
         const html = `
             <div class="d-flex justify-content-end mb-4">
-                <div class="text-dark p-3 rounded-4 shadow-sm" style="background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); max-width: 80%;">
-                    ${teks}
+                <div class="text-dark p-3 rounded-4 shadow-sm" style="background: linear-gradient(135deg, #0e7490 0%, #1e40af 100%); max-width: 80%;">
+                    ${escapeHtml(teks).replace(/\n/g, '<br>')}
                 </div>
             </div>
         `;
@@ -89,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToBottom();
     }
 
-    function tampilkanPesanAI(teks) {
+    function tampilkanPesanAI(teksHtml) {
         const container = document.getElementById('ai-response');
         // Bubble AI (Warna Gelap, Rata Kiri, Pakai Ikon Robot)
         const html = `
@@ -97,13 +107,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="me-3 flex-shrink-0">
                     <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fs-5 shadow-sm" style="width: 45px; height: 45px;">🤖</div>
                 </div>
-                <div class="p-3 rounded-4 shadow-sm w-100 border" style="background-color: #1e293b; border-color: rgba(196, 113, 237, 0.3) !important; color: #e2e8f0; line-height: 1.6;">
-                    ${teks}
+                <div class="p-3 rounded-4 shadow-sm w-100 border ai-bubble" style="background-color: #1e293b; border-color: rgba(196, 113, 237, 0.3) !important; color: #e2e8f0; line-height: 1.6;">
+                    <div class="ai-bubble-text"></div>
                 </div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', html);
-        scrollToBottom();
+        const textEl = container.lastElementChild.querySelector('.ai-bubble-text');
+        // Tampilkan dengan efek mengetik agar terasa seperti chat sungguhan
+        ketikPesanAI(textEl, teksHtml);
+    }
+
+    function ketikPesanAI(textEl, teksHtml) {
+        // Versi teks polos (tanpa tag HTML) untuk efek mengetik
+        const teksPlain = teksHtml
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<pre><code>/gi, '')
+            .replace(/<\/code><\/pre>/gi, '')
+            .replace(/<[^>]+>/g, '');
+
+        let i = 0;
+        const speed = 10; // ms per langkah ketikan
+        textEl.style.whiteSpace = 'pre-wrap';
+
+        // Jeda singkat biar terasa "berpikir dulu" sebelum mengetik
+        setTimeout(function tick() {
+            if (i < teksPlain.length) {
+                textEl.innerHTML = escapeHtml(teksPlain.slice(0, i)) + '<span class="typing-caret"></span>';
+                i += 2;
+                setTimeout(tick, speed);
+                scrollToBottom();
+            } else {
+                textEl.style.whiteSpace = '';
+                textEl.innerHTML = teksHtml;
+                scrollToBottom();
+            }
+        }, 350);
     }
 
     function tampilkanLoadingAI() {
@@ -117,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="p-3 rounded-4 shadow-sm border d-flex align-items-center" style="background-color: #1e293b; border-color: rgba(196, 113, 237, 0.3) !important; width: fit-content;">
                     <div class="spinner-border spinner-border-sm text-info me-2" role="status"></div>
-                    <span class="text-muted">AI sedang mengetik...</span>
+                    <span class="text-muted">Lia sedang mengetik...</span>
                 </div>
             </div>
         `;
@@ -129,6 +168,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function hapusElemen(id) {
         const el = document.getElementById(id);
         if (el) el.remove();
+    }
+
+    // Cegah HTML injection saat teks ditampilkan (efek mengetik / bubble user)
+    function escapeHtml(teks) {
+        const div = document.createElement('div');
+        div.textContent = teks;
+        return div.innerHTML;
     }
 
     // Auto-scroll ke pesan paling baru

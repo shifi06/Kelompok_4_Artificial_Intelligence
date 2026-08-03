@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ 'Edit Buku' if book else 'Tambah Buku' }} - Library AI System{% endblock %}
+
+{% block meta_description %}{{ 'Perbarui informasi buku yang sudah ada di koleksi Library AI System.' if book else 'Tambahkan buku baru ke koleksi Library AI System untuk memperkaya database perpustakaan.' }}{% endblock %}
+
+{% block robots %}noindex, follow{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Beranda</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('main.list_books') }}">Koleksi Buku</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ 'Edit Buku' if book else 'Tambah Buku' }}</li>
+        </ol>
+    </nav>
+
+    <div class="card p-4">
+        <h1 class="fw-bold gemini-gradient-text mb-4">{{ 'Edit Buku' if book else 'Tambah Buku Baru' }}</h1>
+
+        <form method="POST" action="{{ url_for('main.update_book', book_id=book.id) if book else url_for('main.create_book') }}">
+            <div class="mb-3">
+                <label for="title" class="form-label">Judul Buku <span class="text-danger">*</span></label>
+                <input type="text" id="title" name="title" class="form-control" value="{{ book.title if book else '' }}" placeholder="Contoh: Pemrograman Web Modern" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="author" class="form-label">Penulis</label>
+                <input type="text" id="author" name="author" class="form-control" value="{{ book.author if book else '' }}" placeholder="Contoh: Rudi Hartono">
+            </div>
+
+            <div class="mb-3">
+                <label for="category" class="form-label">Kategori</label>
+                <input type="text" id="category" name="category" class="form-control" value="{{ book.category if book else '' }}" placeholder="Contoh: Teknologi / IT">
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Deskripsi <span class="text-danger">*</span></label>
+                <textarea id="description" name="description" class="form-control" rows="5" placeholder="Jelaskan isi buku secara singkat..." required>{{ book.description if book else '' }}</textarea>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-primary">{{ 'Simpan Perubahan' if book else 'Tambahkan Buku' }}</button>
+                <a href="{{ url_for('main.list_books') }}" class="btn btn-outline-secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
